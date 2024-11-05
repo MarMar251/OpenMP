@@ -6,23 +6,24 @@ CFLAGS = -fopenmp -pg
 SRC = integral.c
 EXE = integral
 
+# Thread counts for profiling
+THREAD_COUNTS = 1 2 4 8
+
 # Build executable
 all: $(EXE)
 
 $(EXE): $(SRC)
 	$(CC) $(CFLAGS) -o $(EXE) $(SRC) -lm
 
-# Run the program 
-run: $(EXE)
-	./$(EXE)
-
-
-# Profile the program using gprof
+# Run the program with profiling for each thread count
 profile: $(EXE)
-	./$(EXE) $(THREADS)
-	gprof $(EXE) gmon.out > profile.txt
-	cat profile.txt
+	@for threads in $(THREAD_COUNTS); do \
+		echo "Profiling with $$threads threads..."; \
+		OMP_NUM_THREADS=$$threads ./$(EXE); \
+		gprof $(EXE) gmon.out > profile_$$threads.txt; \
+		cat profile_$$threads.txt; \
+	done
 
 # Clean up
 clean:
-	rm -f $(EXE) gmon.out profile.txt
+	rm -f $(EXE) gmon.out profile*.txt
