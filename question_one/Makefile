@@ -12,10 +12,10 @@ all: $(EXE)
 $(EXE): $(SRC)
 	$(CC) $(CFLAGS) -o $(EXE) $(SRC) -lm
 
-# Run the program with the specified number of threads
-# Usage: make run THREADS=<number>
+# Run the program 
 run: $(EXE)
-	./$(EXE) $(THREADS)
+	./$(EXE)
+
 
 # Profile the program using gprof
 profile: $(EXE)
