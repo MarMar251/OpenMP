@@ -4,24 +4,24 @@
 #include <omp.h>
 
 double f(double x) {
-    return log(x) / x;  // Function to integrate
+    return log(x) / x; 
 }
 
 int main(int argc, char* argv[]) {
-    const double a = 1.0;    // Start of interval
-    const double b = 10.0;   // End of interval
-    const int n = 1000000;   // Number of subdivisions
-    const double dx = (b - a) / n; // Width of each subdivision
+    const double start_interval = 1.0;
+    const double end_interval = 10.0;
+    const int subdivisions = 1000000;
+    const double Width = (end_interval - start_interval) / subdivisions;
 
-    double total_area;       // Variable to store total area
-    double sequential_time;  // Variable to store sequential execution time
+    double total_area;      
+    double sequential_time; 
 
     // Calculate the area sequentially for speedup comparison
     total_area = 0.0;
     double start_time = omp_get_wtime();
-    for (int i = 0; i < n; i++) {
-        double x = a + i * dx;
-        total_area += f(x) * dx;
+    for (int i = 0; i < subdivisions; i++) {
+        double x = start_interval + i * Width;
+        total_area += f(x) * Width;
     }
     sequential_time = omp_get_wtime() - start_time;
 
@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
             double partial_sum = 0.0;
 
             #pragma omp for
-            for (int i = 0; i < n; i++) {
-                double x = a + i * dx;
-                partial_sum += f(x) * dx;
+            for (int i = 0; i < subdivisions; i++) {
+                double x = start_interval + i * Width;
+                partial_sum += f(x) * Width;
             }
 
             // Accumulate results in the main thread
