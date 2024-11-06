@@ -19,4 +19,4 @@ profile: $(EXE)
 	cat profile$(THREADS).txt
 # Clean up
 clean:
-	rm -f $(EXE) gmon.out profile.txt
+	rm -f $(EXE) gmon.out profile*.txt

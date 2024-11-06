@@ -26,13 +26,21 @@ int is_in_mandelbrot(double x0, double y0) {
     return iteration == MAX_ITER;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <num_threads>\n", argv[0]);
+        return 1;
+    }
+
+    int num_threads = atoi(argv[1]);
+    omp_set_num_threads(num_threads);
+
     srand(time(0)); // Seed for random number generation
     int in_set = 0;
     double area_estimate;
     double total_area = (R_MAX - R_MIN) * (I_MAX - I_MIN);
 
-    // Sequential calculation
+    // Sequential calculation for comparison
     double start_time = omp_get_wtime();
     for (int i = 0; i < NUM_POINTS; i++) {
         double real = R_MIN + ((double)rand() / RAND_MAX) * (R_MAX - R_MIN);
@@ -44,33 +52,29 @@ int main() {
     }
     area_estimate = total_area * in_set / NUM_POINTS;
     double sequential_time = omp_get_wtime() - start_time;
-    printf("Sequential Mandelbrot Set Area Estimate: %f\n", area_estimate);
-    printf("Sequential Time: %f seconds\n\n", sequential_time);
 
-    // Testing parallel calculation with various numbers of threads
-    for (int num_threads = 1; num_threads <= 8; num_threads *= 2) {
-        in_set = 0;
-        omp_set_num_threads(num_threads);
+    // Reset count for parallel calculation
+    in_set = 0;
 
-        start_time = omp_get_wtime();
-        #pragma omp parallel for reduction(+:in_set)
-        for (int i = 0; i < NUM_POINTS; i++) {
-            double real = R_MIN + ((double)rand() / RAND_MAX) * (R_MAX - R_MIN);
-            double imag = I_MIN + ((double)rand() / RAND_MAX) * (I_MAX - I_MIN);
+    // Parallel calculation
+    start_time = omp_get_wtime();
+    #pragma omp parallel for reduction(+:in_set)
+    for (int i = 0; i < NUM_POINTS; i++) {
+        double real = R_MIN + ((double)rand() / RAND_MAX) * (R_MAX - R_MIN);
+        double imag = I_MIN + ((double)rand() / RAND_MAX) * (I_MAX - I_MIN);
 
-            if (is_in_mandelbrot(real, imag)) {
-                in_set++;
-            }
+        if (is_in_mandelbrot(real, imag)) {
+            in_set++;
         }
-        area_estimate = total_area * in_set / NUM_POINTS;
-        double parallel_time = omp_get_wtime() - start_time;
-        double speedup = sequential_time / parallel_time;
-
-        printf("Threads: %d\n", num_threads);
-        printf("Parallel Mandelbrot Set Area Estimate: %f\n", area_estimate);
-        printf("Parallel Time: %f seconds\n", parallel_time);
-        printf("Speedup: %f\n\n", speedup);
     }
+    area_estimate = total_area * in_set / NUM_POINTS;
+    double parallel_time = omp_get_wtime() - start_time;
+    double speedup = sequential_time / parallel_time;
+
+
+    printf("Parallel Mandelbrot Set Area Estimate: %f\n", area_estimate);
+    printf("Parallel Time: %f seconds\n", parallel_time);
+    printf("Speedup: %f\n\n", speedup);
 
     return 0;
 }

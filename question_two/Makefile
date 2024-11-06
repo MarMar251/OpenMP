@@ -1,36 +1,24 @@
-# Compiler
+# Compiler and flags
 CC = gcc
 CFLAGS = -fopenmp -pg
 
 # Source file and executable
 SRC = mandelbrot.c
 EXE = mandelbrot
-
-# Number of threads to test
-THREAD_COUNTS = 1 2 4 8
-
-# Default rule
+# Build executable
 all: $(EXE)
-
-# Build executable from source file
 $(EXE): $(SRC)
 	$(CC) $(CFLAGS) -o $(EXE) $(SRC)
-
-# Run the program
+# Run the program with the specified number of threads
+# Usage: make run THREADS=<number>
 run: $(EXE)
-	./$(EXE)
-
-# Profile the program using gprof for each thread count
+	./$(EXE) $(THREADS)
+# Profile the program using gprof
+# Usage: make profile THREADS=<number>
 profile: $(EXE)
-	@for threads in $(THREAD_COUNTS); do \
-		echo "Profiling with $$threads threads..."; \
-		OMP_NUM_THREADS=$$threads ./$(EXE); \
-		gprof $(EXE) gmon.out > profile_$$threads.txt; \
-		echo "Profile for $$threads threads:"; \
-		cat profile_$$threads.txt; \
-		echo ""; \
-	done
-
+	./$(EXE) $(THREADS)
+	gprof $(EXE) gmon.out > profile$(THREADS).txt
+	cat profile$(THREADS).txt
 # Clean up
 clean:
 	rm -f $(EXE) gmon.out profile*.txt

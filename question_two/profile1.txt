@@ -3,9 +3,9 @@ Flat profile:
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
  time   seconds   seconds    calls  us/call  us/call  name    
- 99.91    831.06   831.06 49909236    16.65    16.65  is_in_mandelbrot
-  0.09    831.78     0.72                             main
-  0.01    831.84     0.06                             _init
+ 99.91    360.85   360.85 20000000    18.04    18.04  is_in_mandelbrot
+  0.08    361.15     0.30                             main
+  0.00    361.16     0.01                             _init
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -43,18 +43,18 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 4 byte(s) for 0.00% of 831.84 seconds
+granularity: each sample hit covers 4 byte(s) for 0.00% of 361.16 seconds
 
 index % time    self  children    called     name
                                                  <spontaneous>
-[1]    100.0    0.72  831.06                 main [1]
-              831.06    0.00 49909236/49909236     is_in_mandelbrot [2]
+[1]    100.0    0.30  360.85                 main [1]
+              360.85    0.00 20000000/20000000     is_in_mandelbrot [2]
 -----------------------------------------------
-              831.06    0.00 49909236/49909236     main [1]
-[2]     99.9  831.06    0.00 49909236         is_in_mandelbrot [2]
+              360.85    0.00 20000000/20000000     main [1]
+[2]     99.9  360.85    0.00 20000000         is_in_mandelbrot [2]
 -----------------------------------------------
                                                  <spontaneous>
-[3]      0.0    0.06    0.00                 _init [3]
+[3]      0.0    0.01    0.00                 _init [3]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by
